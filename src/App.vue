@@ -60,6 +60,23 @@ export default {
           completed: false,
         },
       ],
+      allTodos: JSON.parse(localStorage.getItem("allTodos")) || [
+        {
+          id: 1,
+          title: "Buy products",
+          completed: false,
+        },
+        {
+          id: 2,
+          title: "Feed the pet",
+          completed: true,
+        },
+        {
+          id: 3,
+          title: "Repair site",
+          completed: false,
+        },
+      ],
       selectFilter: JSON.parse(localStorage.getItem("selectFilter")) || [
         {
           title: "Все",
@@ -88,22 +105,22 @@ export default {
     },
     addTodo(todo) {
       if (todo.trim()) {
-        const prevData = JSON.parse(localStorage.getItem("allTodos"));
+        const prevData = this.allTodos;
         this.todos = prevData;
         this.todos.push({
           id: Date.now(),
           title: todo,
           completed: false,
         });
+        this.allTodos = this.todos;
         localStorage.setItem("allTodos", JSON.stringify(this.todos));
         localStorage.setItem("todos", JSON.stringify(this.todos));
         const seleсted = localStorage.getItem("seleсted");
-        console.log(seleсted);
         this.filterTodos(seleсted);
       }
     },
     completeTodo(id) {
-      const prevData = JSON.parse(localStorage.getItem("allTodos"));
+      const prevData = this.allTodos;
       this.todos = prevData;
       this.todos = this.todos.map((todo) => {
         if (todo.id === id) {
@@ -111,13 +128,14 @@ export default {
         }
         return todo;
       });
+      const seleсted = localStorage.getItem("seleсted");
+      this.filterTodos(seleсted);
       localStorage.setItem("todos", JSON.stringify(this.todos));
-      localStorage.setItem("allTodos", JSON.stringify(this.todos));
     },
     filterTodos(isCompleted) {
       console.log(isCompleted);
       localStorage.setItem("seleсted", isCompleted);
-      const prevData = JSON.parse(localStorage.getItem("allTodos"));
+      const prevData = this.allTodos;
       if (isCompleted === "all") {
         this.todos = prevData;
         this.selectFilter[0].selected = true;
@@ -146,7 +164,10 @@ export default {
     deleteTodo(id, ref) {
       ref.classList.add("todo-anim");
       setTimeout(() => {
-        this.todos = this.todos.filter((todo) => todo.id !== id);
+        this.allTodos = this.allTodos.filter((todo) => todo.id !== id);
+        this.todos = this.allTodos;
+        const seleсted = localStorage.getItem("seleсted");
+        this.filterTodos(seleсted);
         localStorage.setItem("todos", JSON.stringify(this.todos));
         localStorage.setItem("allTodos", JSON.stringify(this.todos));
       }, 300);

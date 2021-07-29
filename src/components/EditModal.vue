@@ -5,8 +5,8 @@
         &times;
       </button>
       <div class="form">
-        <input v-model="title" class="form-control" type="text" />
-        <button @click="setTitle">Edit</button>
+        <input v-model="title" class="form-control" type="text" v-on:keyup.enter="setTitle" />
+        <button v:on="setTitle">Изменить</button>
       </div>
     </div>
   </div>
